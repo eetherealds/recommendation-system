@@ -28,7 +28,7 @@ Pengembangan sistem rekomendasi ini menjadi penting karena dapat memberikan pand
 - Menerapkan pendekatan collaborative filtering dengan memanfaatkan algoritma deep learning agar dapat menangkap pola preferensi pengguna secara lebih mendalam.
 
 ## Data Understanding
-Dataset yang digunakan merupakan kumpulan data produk kosmetik dari platform Sephora yang tersedia secara publik di [Kaggle](https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/data). Dataset ini berisi 1472 baris dan 11 kolom yang merepresentasikan berbagai atribut produk kosmetik, seperti label produk, merek, nama produk, harga, peringkat, daftar bahan (ingredients), serta kecocokan produk untuk tipe kulit tertentu (kombinasi, kering, normal, berminyak, sensitif). Dataset ini sangat cocok untuk eksplorasi sistem rekomendasi produk berbasis kandungan bahan kosmetik.
+Dataset yang digunakan merupakan kumpulan data produk kosmetik dari platform Sephora yang tersedia secara publik di [Kaggle](https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/data). Dataset ini berisi 1472 baris dan 11 kolom yang merepresentasikan berbagai atribut produk kosmetik, seperti Label, Brand, Name, Price, Rank, Ingredients, serta kecocokan produk untuk tipe kulit tertentu (Combination, Dry, Normal, Oily, Sensitive).
 
 ### Data Loading
 #### Variabel pada Cosmetics dataset
@@ -204,7 +204,7 @@ Pada tahap ini, data dipersiapkan untuk pembuatan sistem rekomendasi collaborati
 
 **Penyusunan DataFrame**
 
-Data yang digunakan difokuskan pada kolom-kolom penting, yaitu Brand, Name, Brand_Product (gabungan dari Brand, Name, dan Label produk), serta Ingredient_Skin yang merupakan daftar ingredients produk yang telah digabungkan dengan tipe kulit yang sesuai. Untuk setiap produk, dibuat kolom product_id sebagai kode unik yang memudahkan proses identifikasi dan pemetaan produk dalam sistem.
+Data yang digunakan difokuskan pada kolom-kolom penting, yaitu `Brand`, `Name`, `Brand_Product` (gabungan dari Brand, Name, dan Label produk), serta `Ingredient_Skin` yang merupakan daftar ingredients produk yang telah digabungkan dengan tipe kulit yang sesuai. Untuk setiap produk, dibuat kolom `product_id` sebagai kode unik yang memudahkan proses identifikasi dan pemetaan produk dalam sistem.
 
 No    | Brand	          | Name	                                        | Rank |	Brand_Product	| Ingredient_Skin	| product_id
 ------|-----------------|----------------------------------------------|------|---------------|-----------------|-----------
@@ -307,13 +307,13 @@ Loss dan RMSE turun signifikan pada beberapa epoch awal, lalu stabil.
 
 
 ## Kesimpulan 
-1. Bagaimana distribusi produk tiap brand untuk jenis kulit tertentu?
+**1. Bagaimana distribusi produk tiap brand untuk jenis kulit tertentu?**
 Berdasarkan analisis distribusi produk, ditemukan bahwa brand DR. JART+ secara konsisten mendominasi jumlah produk skincare yang ditujukan untuk berbagai jenis kulit seperti kombinasi, kering, normal, dan sensitif. Sedangkan untuk kulit berminyak, KIEHL'S SINCE 1851 menjadi brand dengan produk terbanyak. Temuan ini menunjukkan adanya spesialisasi dan fokus brand tertentu pada segmen kulit tertentu.
 
-2. Bagaimana bahan tertentu mempengaruhi kecocokan produk untuk jenis kulit tertentu?
+**2. Bagaimana bahan tertentu mempengaruhi kecocokan produk untuk jenis kulit tertentu?**
 Hasil analisis ingredients menunjukkan bahwa bahan dasar seperti water dan glycerin hampir selalu ditemukan dalam produk skincare untuk semua jenis kulit. Selain itu, bahan seperti phenoxyethanol dan butylene glycol juga sering muncul di berbagai produk. Komposisi bahan-bahan utama cenderung serupa antar tipe kulit, namun produk untuk kulit sensitif biasanya menghindari bahan yang bersifat iritatif. Hal ini menunjukkan bahwa meskipun bahan dasar sama, pemilihan bahan tambahan yang lebih spesifik tetap berpengaruh terhadap kecocokan produk untuk jenis kulit tertentu.
 
-3. Bagaimana hubungan antara jumlah ingredients dan rank produk?
+**3. Bagaimana hubungan antara jumlah ingredients dan rank produk?**
 Analisis hubungan antara jumlah ingredients dan rank produk memperlihatkan bahwa tidak ada korelasi langsung yang signifikan antara banyaknya jumlah bahan dengan tingkat popularitas atau peringkat (rank) produk. Produk skincare dengan rank tinggi bisa saja memiliki jumlah bahan yang sedikit atau banyak. Hal ini menegaskan bahwa kualitas dan efektivitas bahan lebih penting daripada kuantitas bahan dalam menentukan reputasi dan popularitas produk di pasaran. 
 
 ## Referensi
