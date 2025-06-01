@@ -1,8 +1,11 @@
 # Laporan Proyek Machine Learning - Dearni Lambardo Saragih
 
 ## Project Overview
+Kulit merupakan organ terluar tubuh manusia yang memiliki peran vital dalam melindungi tubuh dari berbagai faktor eksternal. Dalam era modern ini, perawatan kulit (skincare) telah menjadi bagian penting dari rutinitas kesehatan dan kecantikan bagi banyak orang. Namun, dengan banyaknya produk skincare yang tersedia di pasaran, konsumen sering kali mengalami kesulitan dalam memilih produk yang sesuai dengan jenis dan permasalahan kulit mereka [1](https://jgi.internationaljournallabs.com/index.php/ji/article/view/192).
 
+Menurut penelitian yang dilakukan oleh Magfiroh (2023), sebagian besar konsumen mengalami kebingungan saat memilih produk skincare karena kurangnya pengetahuan tentang kandungan produk dan kesesuaiannya dengan tipe kulit mereka. Hal ini dapat menyebabkan pembelian produk yang tidak tepat, yang berpotensi memperburuk kondisi kulit atau tidak memberikan hasil yang diharapkan [2].
 
+Sistem rekomendasi pemilihan produk skincare hadir sebagai solusi untuk mengatasi permasalahan tersebut. Dengan memanfaatkan teknologi informasi, sistem ini dapat membantu konsumen menemukan produk skincare yang sesuai dengan jenis kulit dan permasalahan kulit yang dialami [1]. Pengembangan sistem rekomendasi ini menjadi penting karena dapat memberikan panduan yang lebih personal dan spesifik bagi pengguna, dibandingkan dengan saran umum yang mungkin tidak sesuai dengan kondisi kulit individu.
 
 ## Business Understanding
 ### Problem Statements
