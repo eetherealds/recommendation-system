@@ -28,12 +28,10 @@ Pengembangan sistem rekomendasi ini menjadi penting karena dapat memberikan pand
 - Menerapkan pendekatan collaborative filtering dengan memanfaatkan algoritma deep learning agar dapat menangkap pola preferensi pengguna secara lebih mendalam.
 
 ## Data Understanding
-Dataset ini berisi informasi mengenai 1472 produk kosmetik yang diambil dari platform Sephora. Setiap entri dalam dataset ini mencakup nama produk, merek, serta daftar ingredient list yang terdapat dalam produk tersebut.
+Dataset yang digunakan merupakan kumpulan data produk kosmetik dari platform Sephora yang tersedia secara publik di [Kaggle](https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/data). Dataset ini berisi 1472 baris dan 11 kolom yang merepresentasikan berbagai atribut produk kosmetik, seperti label produk, merek, nama produk, harga, peringkat, daftar bahan (ingredients), serta kecocokan produk untuk tipe kulit tertentu (kombinasi, kering, normal, berminyak, sensitif). Dataset ini sangat cocok untuk eksplorasi sistem rekomendasi produk berbasis kandungan bahan kosmetik.
 
-Sumber Dataset:
-https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/data
-
-### Variabel-variabel pada Cosmetics dataset
+### Variabel pada Cosmetics dataset
+Dataset ini memiliki 11 variabel dengan keterangan sebagai berikut.
 Variabel | Keterangan
 ---------|-----------
 Label |	Kategori/jenis produk kosmetik
@@ -48,8 +46,25 @@ Normal |	Cocok untuk kulit normal (1=ya, 0=tidak)
 Oily | Cocok untuk kulit berminyak (1=ya, 0=tidak)
 Sensitive	| Cocok untuk kulit sensitif (1=ya, 0=tidak)
 
-**Rubrik/Kriteria Tambahan (Opsional)**:
-- Melakukan beberapa tahapan yang diperlukan untuk memahami data, contohnya teknik visualisasi data beserta insight atau exploratory data analysis.
+Dataset terdiri dari 1472 baris dan 11 kolom, 
+
+#   Column       Non-Null Count  Dtype  
+---  ------       --------------  -----  
+ 0   Label        1472 non-null   object 
+ 1   Brand        1472 non-null   object 
+ 2   Name         1472 non-null   object 
+ 3   Price        1472 non-null   int64  
+ 4   Rank         1472 non-null   float64
+ 5   Ingredients  1472 non-null   object 
+ 6   Combination  1472 non-null   int64  
+ 7   Dry          1472 non-null   int64  
+ 8   Normal       1472 non-null   int64  
+ 9   Oily         1472 non-null   int64  
+ 10  Sensitive    1472 non-null   int64
+ 
+ dengan tidak ditemukan nilai kosong pada seluruh kolom. Statistik deskriptif menunjukkan sebaran harga, rank, dan jumlah produk untuk masing-masing kategori kulit.
+
+### EDA
 
 ## Data Preparation
 Pada bagian ini Anda menerapkan dan menyebutkan teknik data preparation yang dilakukan. Teknik yang digunakan pada notebook dan laporan harus berurutan.
