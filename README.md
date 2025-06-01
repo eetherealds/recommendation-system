@@ -125,7 +125,7 @@ Tidak terdapat missing values, jadi tidak dilakukan cleaning pada data.
 
 Berdasarkan grafik pada gambar di atas, penulis mendapat kesimpulan yaitu:
 
-Top 5 Product Brands for | Penjelasan
+Top 5 Product Brands     | Penjelasan
 -------------------------|-----------
 Combination              | menampilkan lima brand teratas dengan jumlah produk terbanyak yang direkomendasikan untuk tipe kulit kombinasi. DR. JART+ menempati posisi teratas, yang berarti brand ini paling banyak menawarkan produk untuk kulit kombinasi dibandingkan brand lain dalam dataset.
 Dry                      | menampilkan lima brand teratas untuk tipe kulit kering. DR. JART+ juga menjadi brand dengan produk terbanyak untuk kulit kering.
@@ -176,19 +176,97 @@ Gambar scatterplot di atas menunjukkan hubungan antara jumlah bahan (Ingredients
 - Produk kategori Expensive memiliki rata-rata jumlah bahan terbanyak (~35 bahan).
 
 Semakin mahal harga produk, semakin banyak pula rata-rata bahan yang digunakan dalam produk tersebut.
+
 ## Data Preparation
-Pada bagian ini Anda menerapkan dan menyebutkan teknik data preparation yang dilakukan. Teknik yang digunakan pada notebook dan laporan harus berurutan.
+Proses persiapan data untuk content-based filtering dan collaborative filtering dilakukan secara terpisah dan disesuaikan dengan kebutuhan masing-masing karena ada perbedaan mendasar antara keduanya.
 
-**Rubrik/Kriteria Tambahan (Opsional)**: 
-- Menjelaskan proses data preparation yang dilakukan
-- Menjelaskan alasan mengapa diperlukan tahapan data preparation tersebut.
+### 1. Content-Based Filtering
+Pada tahap ini, data dipersiapkan untuk membangun sistem rekomendasi berbasis konten (content-based filtering) pada produk skincare. Fokus utama adalah pada empat kolom, yaitu:
+- `Brand`           : Nama merek produk
+- `Name`            : Nama produk
+- `Brand_Product`   : Gabungan dari Brand, Name, dan Label produk
+- `Ingredient_Skin` : Daftar ingredients produk, diakhiri dengan tipe kulit yang sesuai
 
-## Modeling
-Tahapan ini membahas mengenai model sisten rekomendasi yang Anda buat untuk menyelesaikan permasalahan. Sajikan top-N recommendation sebagai output.
+Seluruh kolom dikonversi ke dalam list, lalu digabungkan kembali dalam sebuah DataFrame baru bernama `content_based_data`. Kolom `Ingredient_Skin` selanjutnya diolah menggunakan TfidfVectorizer untuk mengubah data teks menjadi representasi numerik, sehingga bisa digunakan untuk perhitungan kemiripan antar produk (cosine similarity).
 
-**Rubrik/Kriteria Tambahan (Opsional)**: 
-- Menyajikan dua solusi rekomendasi dengan algoritma yang berbeda.
-- Menjelaskan kelebihan dan kekurangan dari solusi/pendekatan yang dipilih.
+Hasil vektorisasi TF-IDF ini disusun dalam DataFrame, di mana:
+- **Baris** : Brand_Product (identitas unik produk)
+- **Kolom** : fitur hasil ekstraksi dari kombinasi ingredients dan skin type
+  
+![image](https://github.com/user-attachments/assets/cdaade94-02b1-40ab-ad3c-cff0e90c6446)
+
+**note:** karena kolom sangat banyak jadi tidak bisa dimuat semua kolomnya.
+
+![image](https://github.com/user-attachments/assets/8b5aa48d-391f-489e-8e35-72d326cb68bc)
+
+### 2.  Collaborative - based Filtering
+Pada tahap ini, data dipersiapkan untuk pembuatan sistem rekomendasi collaborative filtering pada produk skincare. Langkah-langkah utama yang dilakukan meliputi:
+
+**Penyusunan DataFrame**
+
+Data yang digunakan difokuskan pada kolom-kolom penting, yaitu Brand, Name, Brand_Product (gabungan dari Brand, Name, dan Label produk), serta Ingredient_Skin yang merupakan daftar ingredients produk yang telah digabungkan dengan tipe kulit yang sesuai. Untuk setiap produk, dibuat kolom product_id sebagai kode unik yang memudahkan proses identifikasi dan pemetaan produk dalam sistem.
+
+No    | Brand	          | Name	                                        | Rank |	Brand_Product	| Ingredient_Skin	| product_id
+------|-----------------|----------------------------------------------|------|---------------|-----------------|-----------
+0	    | LA MER	         | Crème de la Mer                              |	4.1	 |LA MER - Crème de la Mer (Moisturizer)	| Algae (Seaweed) Extract, Mineral Oil, Petrolat...	|LA0
+1	    | SK-II	          | Facial Treatment Essence	                    | 4.1	 | SK-II - Facial Treatment Essence (Moisturizer)	| Galactomyces Ferment Filtrate (Pitera), Butyle...	| SK-1
+2     | DRUNK ELEPHANT	 | Protini™ Polypeptide Cream	                  | 4.4	 | DRUNK ELEPHANT - Protini™ Polypeptide Cream (M...	| Water, Dicaprylyl Carbonate, Glycerin, Ceteary...	| DRU2
+3	    | LA MER	         | The Moisturizing Soft Cream                 	| 3.8	 | LA MER - The Moisturizing Soft Cream (Moisturi...	| Algae (Seaweed) Extract, Cyclopentasiloxane, P...	| LA3
+4	    | IT COSMETICS	   | Your Skin But Better™ CC+™ Cream with SPF 50+ |	4.1	| IT COSMETICS - Your Skin But Better™ CC+™ Crea... |	Water, Snail Secretion Filtrate, Phenyl Trimet... |	IT4
+
+**Encoding & Normalisasi Rank**
+
+Selanjutnya, dilakukan encoding terhadap kolom `product_id` dan `Brand_Product` menjadi bentuk numerik menggunakan dictionary mapping, sehingga data dapat diterima oleh model machine learning untuk collaborative filtering. Kolom Rank yang merepresentasikan popularitas atau rating produk kemudian dinormalisasi ke rentang 0–1 agar seragam dan sesuai untuk pemodelan. 
+
+**Shuffling & Split Data**
+
+Setelah itu, data diacak untuk memastikan distribusi yang merata saat proses pelatihan. Fitur input berupa pasangan angka hasil encoding (product dan name), sedangkan targetnya adalah nilai Rank yang telah dinormalisasi. 
+
+Rank |	product_id	| product	| name
+-----|------------|---------|------
+3.8	 | SK-852	    | 852	    | 852
+4.7	 | EST184	    | 184	    | 184
+4.0	 | PET1261    | 1261    |	1261
+4.0	 | SMA67	     | 67      |	67
+4.5	 | CLI220 	   | 220	    | 220
+
+Data ini kemudian dibagi menjadi dua bagian, yaitu 80% untuk training dan 20% untuk validasi
+
+## Modeling & Result
+
+### 1. Content-Based Filtering
+Pada tahap ini, dilakukan pemodelan sistem rekomendasi content-based filtering untuk produk skincare dengan memanfaatkan kemiripan antar produk berdasarkan fitur konten yang telah diolah sebelumnya.
+
+Langkah pertama adalah menghitung nilai cosine similarity antar seluruh produk menggunakan matriks hasil transformasi TF-IDF (`tfidf_matrix`). Cosine similarity digunakan untuk mengukur tingkat kemiripan antar produk berdasarkan kombinasi ingredients dan tipe kulit yang sesuai. Proses ini menghasilkan matriks kemiripan (similarity matrix) di mana setiap nilai merepresentasikan tingkat kedekatan antara dua produk.
+
+Setelah diperoleh matriks cosine similarity, hasilnya disimpan ke dalam sebuah DataFrame (`cosine_sim_df`) dengan baris dan kolom berupa nama produk (`Brand_Product`). Dengan format ini, setiap produk dapat dibandingkan kemiripannya dengan produk lain secara langsung.
+
+Untuk menghasilkan rekomendasi, digunakan sebuah fungsi yang mengambil produk acuan, mencari nilai cosine similarity tertinggi terhadap produk lain, lalu mengembalikan sejumlah produk yang paling mirip sebagai hasil rekomendasi. Fungsi ini memastikan produk yang direkomendasikan memiliki karakteristik bahan dan kecocokan tipe kulit yang serupa dengan produk referensi, sehingga relevan bagi pengguna. Dengan pendekatan ini, sistem content-based filtering mampu memberikan rekomendasi produk skincare yang personal dan sesuai kebutuhan, berdasarkan kemiripan konten antar produk.
+
+Sebagai contoh, jika pengguna mencari produk `CLINIQUE - Pep-Start 2-in-1 Exfoliating Cleanser (Cleanser)`, fungsi rekomendasi akan mengembalikan 10 produk skincare yang paling mirip berdasarkan skor cosine similarity tertinggi. Berikut ilustrasi format hasil top-10 rekomendasi yang dapat diterima pengguna:
+
+![image](https://github.com/user-attachments/assets/c2c6dbce-7fda-4b8e-aeaa-fef380ede911)
+
+### 2.  Collaborative-Based Filtering
+Pada tahap pemodelan collaborative filtering, sistem rekomendasi dibangun menggunakan pendekatan deep learning berbasis embedding dengan TensorFlow/Keras. Model ini bertugas mempelajari pola hubungan antar produk skincare berdasarkan representasi numerik (encoded) dari produk dan kombinasi nama produk, sehingga mampu memprediksi skor popularitas atau rating suatu produk.
+
+Arsitektur model terdiri dari embedding layer untuk `product_id` dan `Brand_Product`, masing-masing dengan bias, yang kemudian hasil embeddingnya digabungkan dan diproses melalui beberapa dense layer hingga menghasilkan skor prediksi. Model ini dioptimasi menggunakan loss function Mean Squared Error dan optimizer Adam dengan learning rate kecil, serta menggunakan EarlyStopping untuk mencegah overfitting saat pelatihan.
+
+![image](https://github.com/user-attachments/assets/67bb9e28-e4e2-4933-8421-75ed4e5a8c4d)
+
+**Penjelasan:**
+
+- Loss dan root mean squared error (RMSE) pada training dan validation menurun dengan signifikan di beberapa epoch awal.
+- RMSE val mencapai sekitar 0.17 pada epoch terakhir, yang artinya prediksi model mendekati nilai sesungguhnya dengan kesalahan relatif kecil.
+- Pada sekitar epoch ke-5 sampai ke-10, model mulai menunjukkan tanda stabilisasi (loss dan val_loss hampir konstan).
+
+
+Setelah training, perkembangan performa model dapat dimonitor menggunakan grafik RMSE pada data training dan validasi untuk setiap epoch. Untuk menghasilkan rekomendasi, disediakan fungsi yang menerima input nama produk, kemudian mencari produk-produk lain dengan skor prediksi tertinggi (top-N) berdasarkan hasil inferensi model. Informasi produk yang direkomendasikan, seperti nama, ingredients, tipe kulit, dan rating, ditampilkan secara lengkap agar memudahkan pengguna dalam memilih skincare yang sesuai.
+
+Sebagai contoh, jika pengguna mencari rekomendasi berdasarkan produk `CAUDALIE - Instant Foaming Cleanser (Cleanser)`, sistem akan memberikan daftar top-10 produk skincare yang paling potensial untuk direkomendasikan berdasarkan hasil prediksi model collaborative filtering.
+
+![image](https://github.com/user-attachments/assets/419b1a88-e314-4783-9a1d-f5737bcd5f63)
+
 
 ## Evaluation
 Pada bagian ini Anda perlu menyebutkan metrik evaluasi yang digunakan. Kemudian, jelaskan hasil proyek berdasarkan metrik evaluasi tersebut.
@@ -197,12 +275,6 @@ Ingatlah, metrik evaluasi yang digunakan harus sesuai dengan konteks data, probl
 
 **Rubrik/Kriteria Tambahan (Opsional)**: 
 - Menjelaskan formula metrik dan bagaimana metrik tersebut bekerja.
-
-**---Ini adalah bagian akhir laporan---**
-
-_Catatan:_
-- _Anda dapat menambahkan gambar, kode, atau tabel ke dalam laporan jika diperlukan. Temukan caranya pada contoh dokumen markdown di situs editor [Dillinger](https://dillinger.io/), [Github Guides: Mastering markdown](https://guides.github.com/features/mastering-markdown/), atau sumber lain di internet. Semangat!_
-- Jika terdapat penjelasan yang harus menyertakan code snippet, tuliskan dengan sewajarnya. Tidak perlu menuliskan keseluruhan kode project, cukup bagian yang ingin dijelaskan saja.
 
 ## Referensi
 [1] "Sistem Rekomendasi Pemilihan Produk Skincare," Jurnal Global Ilmiah, vol. 5, no. 2, pp. 1-10, 2023. [Online]. Available: https://jgi.internationaljournallabs.com/index.php/ji/article/view/192
