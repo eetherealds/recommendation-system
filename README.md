@@ -28,14 +28,25 @@ Pengembangan sistem rekomendasi ini menjadi penting karena dapat memberikan pand
 - Menerapkan pendekatan collaborative filtering dengan memanfaatkan algoritma deep learning agar dapat menangkap pola preferensi pengguna secara lebih mendalam.
 
 ## Data Understanding
-Paragraf awal bagian ini menjelaskan informasi mengenai jumlah data, kondisi data, dan informasi mengenai data yang digunakan. Sertakan juga sumber atau tautan untuk mengunduh dataset. Contoh: [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/Restaurant+%26+consumer+data).
+Dataset ini berisi informasi mengenai 1472 produk kosmetik yang diambil dari platform Sephora. Setiap entri dalam dataset ini mencakup nama produk, merek, serta daftar ingredient list yang terdapat dalam produk tersebut.
 
-Selanjutnya, uraikanlah seluruh variabel atau fitur pada data. Sebagai contoh:  
+Sumber Dataset:
+https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/data
 
-Variabel-variabel pada Restaurant UCI dataset adalah sebagai berikut:
-- accepts : merupakan jenis pembayaran yang diterima pada restoran tertentu.
-- cuisine : merupakan jenis masakan yang disajikan pada restoran.
-- dst
+### Variabel-variabel pada Cosmetics dataset
+Variabel | Keterangan
+---------|-----------
+Label |	Kategori/jenis produk kosmetik
+Brand	| Merek produk
+Name	| Nama produk
+Price	| Harga produk
+Rank	| Peringkat/popularitas produk
+Ingredients |	Daftar bahan-bahan pada produk
+Combination |	Cocok untuk kulit kombinasi (1=ya, 0=tidak)
+Dry	| Cocok untuk kulit kering (1=ya, 0=tidak)
+Normal |	Cocok untuk kulit normal (1=ya, 0=tidak)
+Oily | Cocok untuk kulit berminyak (1=ya, 0=tidak)
+Sensitive	| Cocok untuk kulit sensitif (1=ya, 0=tidak)
 
 **Rubrik/Kriteria Tambahan (Opsional)**:
 - Melakukan beberapa tahapan yang diperlukan untuk memahami data, contohnya teknik visualisasi data beserta insight atau exploratory data analysis.
