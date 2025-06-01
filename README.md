@@ -5,7 +5,9 @@ Kulit merupakan organ terluar tubuh manusia yang memiliki peran vital dalam meli
 
 Menurut penelitian yang dilakukan oleh Magfiroh (2023), sebagian besar konsumen mengalami kebingungan saat memilih produk skincare karena kurangnya pengetahuan tentang kandungan produk dan kesesuaiannya dengan tipe kulit mereka. Hal ini dapat menyebabkan pembelian produk yang tidak tepat, yang berpotensi memperburuk kondisi kulit atau tidak memberikan hasil yang diharapkan [[2]](http://etheses.uin-malang.ac.id/71365/).
 
-Sistem rekomendasi pemilihan produk skincare hadir sebagai solusi untuk mengatasi permasalahan tersebut. Dengan memanfaatkan teknologi informasi, sistem ini dapat membantu konsumen menemukan produk skincare yang sesuai dengan jenis kulit dan permasalahan kulit yang dialami. Pengembangan sistem rekomendasi ini menjadi penting karena dapat memberikan panduan yang lebih personal dan spesifik bagi pengguna, dibandingkan dengan saran umum yang mungkin tidak sesuai dengan kondisi kulit individu. Dalam pengembangan sistem rekomendasi, penting untuk memperhatikan aspek keamanan data pengguna dan keakuratan rekomendasi. Validasi sistem oleh pakar di bidang dermatologi atau kecantikan dapat meningkatkan kredibilitas dan keandalan sistem [[3]](https://jurnal.aksaraglobal.co.id/index.php/jkppk/article/view/483).
+Sistem rekomendasi pemilihan produk skincare hadir sebagai solusi untuk mengatasi permasalahan tersebut. Dengan memanfaatkan teknologi informasi, sistem ini dapat membantu konsumen menemukan produk skincare yang sesuai dengan jenis kulit dan permasalahan kulit yang dialami. 
+
+Pengembangan sistem rekomendasi ini menjadi penting karena dapat memberikan panduan yang lebih personal dan spesifik bagi pengguna, dibandingkan dengan saran umum yang mungkin tidak sesuai dengan kondisi kulit individu. Dalam pengembangan sistem rekomendasi, penting untuk memperhatikan aspek keamanan data pengguna dan keakuratan rekomendasi. Validasi sistem oleh pakar di bidang dermatologi atau kecantikan dapat meningkatkan kredibilitas dan keandalan sistem [[3]](https://jurnal.aksaraglobal.co.id/index.php/jkppk/article/view/483).
 
 ## Business Understanding
 ### Problem Statements
@@ -65,3 +67,10 @@ Ingatlah, metrik evaluasi yang digunakan harus sesuai dengan konteks data, probl
 _Catatan:_
 - _Anda dapat menambahkan gambar, kode, atau tabel ke dalam laporan jika diperlukan. Temukan caranya pada contoh dokumen markdown di situs editor [Dillinger](https://dillinger.io/), [Github Guides: Mastering markdown](https://guides.github.com/features/mastering-markdown/), atau sumber lain di internet. Semangat!_
 - Jika terdapat penjelasan yang harus menyertakan code snippet, tuliskan dengan sewajarnya. Tidak perlu menuliskan keseluruhan kode project, cukup bagian yang ingin dijelaskan saja.
+
+## Referensi
+[1] "Sistem Rekomendasi Pemilihan Produk Skincare," Jurnal Global Ilmiah, vol. 5, no. 2, pp. 1-10, 2023. [Online]. Available: https://jgi.internationaljournallabs.com/index.php/ji/article/view/192
+
+[2] D. N. Magfiroh, "Sistem Rekomendasi Pemilihan Skincare Personal Berdasarkan Analisis Tipe Kulit Wajah Menggunakan Metode Item Based Collaborative Filtering," UIN Malang, 2023. [Online]. Available: http://etheses.uin-malang.ac.id/71365/
+
+[3] "Jurnal Kesehatan dan Pengembangan Produk Kesehatan," Jurnal Aksara Global, vol. 3, no. 1, pp. 45-58, 2023. [Online]. Available: https://jurnal.aksaraglobal.co.id/index.php/jkppk/article/view/483
