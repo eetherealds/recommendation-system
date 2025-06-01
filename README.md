@@ -269,12 +269,52 @@ Sebagai contoh, jika pengguna mencari rekomendasi berdasarkan produk `CAUDALIE -
 
 
 ## Evaluation
-Pada bagian ini Anda perlu menyebutkan metrik evaluasi yang digunakan. Kemudian, jelaskan hasil proyek berdasarkan metrik evaluasi tersebut.
+### 1. Content-Based Filtering
+**a. Cara Kerja**
 
-Ingatlah, metrik evaluasi yang digunakan harus sesuai dengan konteks data, problem statement, dan solusi yang diinginkan.
+Model content-based filtering pada proyek ini memanfaatkan kemiripan fitur produk (ingredients + skin types) yang direpresentasikan dalam vektor TF-IDF. Kemiripan antar produk dihitung dengan Cosine Similarity. Sistem merekomendasikan produk yang paling mirip (dari sisi komposisi bahan dan tipe kulit) dengan produk yang dicari user.
 
-**Rubrik/Kriteria Tambahan (Opsional)**: 
-- Menjelaskan formula metrik dan bagaimana metrik tersebut bekerja.
+Misal, user mencari `CLINIQUE - Pep-Start 2-in-1 Exfoliating Cleanser (Cleanser)`, sistem akan merekomendasikan produk-produk dengan ingredients dan kategori skin type yang sangat mirip, bahkan dari brand yang sama.
+
+**b. Metrik Evaluasi**
+- Cosine Similarity: Mengukur tingkat kemiripan dua produk berdasarkan vektor fiturnya.
+- Analisis Manual Kualitas Rekomendasi: Dilihat dari kemunculan produk relevan (misal produk cleanser lain dengan ingredients yang serupa).
+  
+![image](https://github.com/user-attachments/assets/2ea2a532-a48c-4918-b3dd-709dcec720be)
+
+**c. Interpretasi**
+Produk-produk yang direkomendasikan memiliki ingredients utama yang serupa dan kecocokan skin type yang sama, membuktikan sistem mampu menangkap kemiripan fitur yang relevan.
+
+### 2. Collaborative-Based Filtering
+**a. Cara Kerja**
+Model collaborative filtering dibangun menggunakan deep learning dengan embedding untuk produk dan nama produk (Brand_Product). Model ini mempelajari pola relasi antara produk dan rating/Rank yang diberikan. Data di-encode secara numerik agar dapat diproses oleh model.
+- Training: model dilatih dengan target prediksi nilai Rank (rating popularitas produk) yang telah dinormalisasi.
+- Testing: rekomendasi dilakukan dengan mencari produk lain yang cenderung memiliki Rank tinggi ketika diasosiasikan dengan produk acuan.
+- 
+**b. Metrik Evaluasi**
+- Root Mean Squared Error (RMSE): digunakan sebagai metrik utama untuk mengukur perbedaan antara Rank prediksi dan Rank aktual pada data validasi.
+
+![image](https://github.com/user-attachments/assets/cfe71a78-148f-4b26-98d6-a23dbab5716a)
+
+
+![image](https://github.com/user-attachments/assets/275abdc6-4009-49bc-afc9-a04af1cb79e4)
+
+**c. Interpretasi**
+- RMSE pada data validasi stabil di sekitar 0.17 pada epoch terakhir.
+Loss dan RMSE turun signifikan pada beberapa epoch awal, lalu stabil.
+- Grafik menunjukkan RMSE validasi konstan, sedangkan training RMSE terus menurun hingga ~0.09, menandakan model mulai sedikit overfitting namun masih dalam batas wajar.
+- Model mampu merekomendasikan produk dengan rating tinggi dan ingredients yang sesuai dengan kebutuhan user.
+
+
+## Kesimpulan 
+1. Bagaimana distribusi produk tiap brand untuk jenis kulit tertentu?
+Berdasarkan analisis distribusi produk, ditemukan bahwa brand DR. JART+ secara konsisten mendominasi jumlah produk skincare yang ditujukan untuk berbagai jenis kulit seperti kombinasi, kering, normal, dan sensitif. Sedangkan untuk kulit berminyak, KIEHL'S SINCE 1851 menjadi brand dengan produk terbanyak. Temuan ini menunjukkan adanya spesialisasi dan fokus brand tertentu pada segmen kulit tertentu.
+
+2. Bagaimana bahan tertentu mempengaruhi kecocokan produk untuk jenis kulit tertentu?
+Hasil analisis ingredients menunjukkan bahwa bahan dasar seperti water dan glycerin hampir selalu ditemukan dalam produk skincare untuk semua jenis kulit. Selain itu, bahan seperti phenoxyethanol dan butylene glycol juga sering muncul di berbagai produk. Komposisi bahan-bahan utama cenderung serupa antar tipe kulit, namun produk untuk kulit sensitif biasanya menghindari bahan yang bersifat iritatif. Hal ini menunjukkan bahwa meskipun bahan dasar sama, pemilihan bahan tambahan yang lebih spesifik tetap berpengaruh terhadap kecocokan produk untuk jenis kulit tertentu.
+
+3. Bagaimana hubungan antara jumlah ingredients dan rank produk?
+Analisis hubungan antara jumlah ingredients dan rank produk memperlihatkan bahwa tidak ada korelasi langsung yang signifikan antara banyaknya jumlah bahan dengan tingkat popularitas atau peringkat (rank) produk. Produk skincare dengan rank tinggi bisa saja memiliki jumlah bahan yang sedikit atau banyak. Hal ini menegaskan bahwa kualitas dan efektivitas bahan lebih penting daripada kuantitas bahan dalam menentukan reputasi dan popularitas produk di pasaran. 
 
 ## Referensi
 [1] "Sistem Rekomendasi Pemilihan Produk Skincare," Jurnal Global Ilmiah, vol. 5, no. 2, pp. 1-10, 2023. [Online]. Available: https://jgi.internationaljournallabs.com/index.php/ji/article/view/192
