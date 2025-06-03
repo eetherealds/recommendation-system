@@ -266,40 +266,31 @@ Untuk implementasi sistem rekomendasi, disediakan fungsi `recommend_products_bas
 
 ## Evaluation
 ### 1. Content-Based Filtering
-**a. Cara Kerja**
-
-Model content-based filtering pada proyek ini memanfaatkan kemiripan fitur produk (ingredients + skin types) yang direpresentasikan dalam vektor TF-IDF. Kemiripan antar produk dihitung dengan Cosine Similarity. Sistem merekomendasikan produk yang paling mirip (dari sisi komposisi bahan dan tipe kulit) dengan produk yang dicari user.
-
-Misal, user mencari `CLINIQUE - Pep-Start 2-in-1 Exfoliating Cleanser (Cleanser)`, sistem akan merekomendasikan produk-produk dengan ingredients dan kategori skin type yang sangat mirip, bahkan dari brand yang sama.
+Model content-based filtering pada kode yang digunakan bekerja dengan membandingkan fitur-fitur dari produk skincare. Fitur utama yang digunakan adalah gabungan nama brand, nama produk, label (kategori produk), ingredients, dan jenis kulit yang sesuai. Untuk menghasilkan rekomendasi, sistem mencari produk lain yang memiliki kemiripan fitur dengan produk yang dipilih pengguna. Kemiripan ini biasanya dihitung menggunakan teknik representasi vektor dan similarity measurement seperti cosine similarity. Produk-produk dengan nilai similarity tertinggi akan direkomendasikan sebagai produk yang mirip.
 
 **b. Metrik Evaluasi**
-- Cosine Similarity: Mengukur tingkat kemiripan dua produk berdasarkan vektor fiturnya.
-- Analisis Manual Kualitas Rekomendasi: Dilihat dari kemunculan produk relevan (misal produk cleanser lain dengan ingredients yang serupa).
-  
-![image](https://github.com/user-attachments/assets/2ea2a532-a48c-4918-b3dd-709dcec720be)
+- Precision@K : mengukur proporsi item relevan yang terdapat pada K rekomendasi teratas.
+
+![image](https://github.com/user-attachments/assets/a5c59a28-988d-4276-a8b9-21a297e9cdec)
+
+**Precision@10** = 8 / 10 = 0.8 atau 80%
+
 
 **c. Interpretasi**
-Produk-produk yang direkomendasikan memiliki ingredients utama yang serupa dan kecocokan skin type yang sama, membuktikan sistem mampu menangkap kemiripan fitur yang relevan.
+Nilai Precision@10 sebesar 80% menunjukkan bahwa sebagian besar produk yang direkomendasikan oleh sistem memang relevan terhadap kebutuhan pengguna berdasarkan label, ingredients, dan skin type. Artinya, sistem content-based filtering sudah cukup efektif dalam memberikan rekomendasi yang akurat, walaupun masih ada ruang perbaikan untuk meningkatkan relevansi rekomendasi pada aspek yang belum sesuai.
 
 ### 2. Collaborative-Based Filtering
-**a. Cara Kerja**
-Model collaborative filtering dibangun menggunakan deep learning dengan embedding untuk produk dan nama produk (Brand_Product). Model ini mempelajari pola relasi antara produk dan rating/Rank yang diberikan. Data di-encode secara numerik agar dapat diproses oleh model.
-- Training: model dilatih dengan target prediksi nilai Rank (rating popularitas produk) yang telah dinormalisasi.
-- Testing: rekomendasi dilakukan dengan mencari produk lain yang cenderung memiliki Rank tinggi ketika diasosiasikan dengan produk acuan.
-- 
-**b. Metrik Evaluasi**
-- Root Mean Squared Error (RMSE): digunakan sebagai metrik utama untuk mengukur perbedaan antara Rank prediksi dan Rank aktual pada data validasi.
+Model collaborative filtering dibangun menggunakan deep learning dengan embedding. Model menerima input berupa pasangan user dan produk hasil encoding, kemudian mempelajari pola interaksi antara user dan produk melalui kolom 'Rank' sebagai nilai rating/popularitas. Setelah proses training, model dapat memprediksi skor rekomendasi produk untuk setiap user berdasarkan pola kolektif dari seluruh data interaksi.
+  
+Evaluasi collaborative filtering dilakukan dengan membandingkan prediksi model terhadap nilai aktual pada data validasi menggunakan metrik Root Mean Squared Error (RMSE). RMSE yang lebih rendah menandakan prediksi model semakin mendekati nilai sebenarnya.
 
-![image](https://github.com/user-attachments/assets/cfe71a78-148f-4b26-98d6-a23dbab5716a)
+![image](https://github.com/user-attachments/assets/2b8e9109-dc14-4497-b8ef-7df37198f665)
 
 
-![image](https://github.com/user-attachments/assets/275abdc6-4009-49bc-afc9-a04af1cb79e4)
+![image](https://github.com/user-attachments/assets/ef8a0e58-13b0-44a1-8b56-95d72d4d53cc)
 
-**c. Interpretasi**
-- RMSE pada data validasi stabil di sekitar 0.17 pada epoch terakhir.
-Loss dan RMSE turun signifikan pada beberapa epoch awal, lalu stabil.
-- Grafik menunjukkan RMSE validasi konstan, sedangkan training RMSE terus menurun hingga ~0.09, menandakan model mulai sedikit overfitting namun masih dalam batas wajar.
-- Model mampu merekomendasikan produk dengan rating tinggi dan ingredients yang sesuai dengan kebutuhan user.
+
+Berdasarkan grafik di atas, terlihat bahwa nilai root mean squared error (RMSE) pada data training dan data validasi (test) sama-sama menurun secara signifikan pada awal proses training. Pada epoch-epoch awal, baik RMSE train maupun test sama-sama mengalami penurunan tajam, menandakan model belajar dengan baik dari data. Setelah sekitar epoch ke-10, penurunan RMSE mulai melambat dan grafik cenderung stabil, terutama pada data validasi yang berada di kisaran 0.28–0.30. Sementara itu, RMSE pada data training terus sedikit turun dan tetap lebih rendah dari data validasi.
 
 
 ## Kesimpulan 
