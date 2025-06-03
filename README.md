@@ -217,6 +217,7 @@ Selanjutnya, dilakukan encoding terhadap kolom `user_id` dan `Brand_Product` men
 Setelah itu, data diacak untuk memastikan distribusi yang merata saat proses training. Fitur input berupa pasangan angka hasil encoding (user dan name). Selanjutnya, fitur input yang digunakan adalah pasangan user dan produk dalam bentuk angka (`user`, `name`), sementara targetnya adalah `Rank` yang telah dinormalisasi ke rentang 0 hingga 1. Normalisasi ini penting agar model dapat beradaptasi dengan perbedaan skala dan menghasilkan prediksi yang lebih stabil.
 
 No   | user	| name	| Rank
+-----|------|------|-----
 852	 | 852 	| 852	 | 3.8
 184	 | 184	 | 184	 | 4.7
 1261	| 1261	| 1261 |	4.0
@@ -255,7 +256,7 @@ Pada tahap ini, dilakukan model sistem rekomendasi produk skincare dibangun meng
 
 Model diinisialisasi dengan jumlah user dan produk hasil encoding, serta embedding size yang diinginkan. Proses kompilasi model menggunakan fungsi loss `BinaryCrossentropy`, optimizer Adam dengan learning rate 0.0005, dan metrik evaluasi `RootMeanSquaredError`. Untuk mencegah overfitting, digunakan callback `EarlyStopping` yang akan menghentikan training jika nilai RMSE validasi tidak membaik selama 5 epoch berturut-turut. Proses training dilakukan dengan batch size 32, maksimal 100 epoch, serta memanfaatkan data validasi 20% dari dataset.
 
-Arsitektur model terdiri dari embedding layer untuk `product_id` dan `Brand_Product`, masing-masing dengan bias, yang kemudian hasil embeddingnya digabungkan dan diproses melalui beberapa dense layer hingga menghasilkan skor prediksi. Model ini dioptimasi menggunakan loss function Mean Squared Error dan optimizer Adam dengan learning rate kecil, serta menggunakan EarlyStopping untuk mencegah overfitting saat pelatihan.
+Arsitektur model terdiri dari embedding layer untuk `user_id` dan `Brand_Product`, masing-masing dengan bias, yang kemudian hasil embeddingnya digabungkan dan diproses melalui beberapa dense layer hingga menghasilkan skor prediksi. Model ini dioptimasi menggunakan loss function Mean Squared Error dan optimizer Adam dengan learning rate kecil, serta menggunakan EarlyStopping untuk mencegah overfitting saat pelatihan.
 
 Setelah training, performa model divisualisasikan dengan membuat grafik learning curve RMSE pada data training dan validasi di setiap epoch, sehingga dapat dipantau apakah model mengalami overfitting atau underfitting. Berdasarkan grafik, model menunjukkan penurunan error yang signifikan di awal, kemudian stabil, menandakan proses training berjalan baik.
 
@@ -268,15 +269,12 @@ Untuk implementasi sistem rekomendasi, disediakan fungsi `recommend_products_bas
 ### 1. Content-Based Filtering
 Model content-based filtering pada kode yang digunakan bekerja dengan membandingkan fitur-fitur dari produk skincare. Fitur utama yang digunakan adalah gabungan nama brand, nama produk, label (kategori produk), ingredients, dan jenis kulit yang sesuai. Untuk menghasilkan rekomendasi, sistem mencari produk lain yang memiliki kemiripan fitur dengan produk yang dipilih pengguna. Kemiripan ini biasanya dihitung menggunakan teknik representasi vektor dan similarity measurement seperti cosine similarity. Produk-produk dengan nilai similarity tertinggi akan direkomendasikan sebagai produk yang mirip.
 
-**b. Metrik Evaluasi**
-- Precision@K : mengukur proporsi item relevan yang terdapat pada K rekomendasi teratas.
+Precision@K : mengukur proporsi item relevan yang terdapat pada K rekomendasi teratas.
 
 ![image](https://github.com/user-attachments/assets/a5c59a28-988d-4276-a8b9-21a297e9cdec)
 
 **Precision@10** = 8 / 10 = 0.8 atau 80%
 
-
-**c. Interpretasi**
 Nilai Precision@10 sebesar 80% menunjukkan bahwa sebagian besar produk yang direkomendasikan oleh sistem memang relevan terhadap kebutuhan pengguna berdasarkan label, ingredients, dan skin type. Artinya, sistem content-based filtering sudah cukup efektif dalam memberikan rekomendasi yang akurat, walaupun masih ada ruang perbaikan untuk meningkatkan relevansi rekomendasi pada aspek yang belum sesuai.
 
 ### 2. Collaborative-Based Filtering
@@ -290,8 +288,7 @@ Evaluasi collaborative filtering dilakukan dengan membandingkan prediksi model t
 ![image](https://github.com/user-attachments/assets/ef8a0e58-13b0-44a1-8b56-95d72d4d53cc)
 
 
-Berdasarkan grafik di atas, terlihat bahwa nilai root mean squared error (RMSE) pada data training dan data validasi (test) sama-sama menurun secara signifikan pada awal proses training. Pada epoch-epoch awal, baik RMSE train maupun test sama-sama mengalami penurunan tajam, menandakan model belajar dengan baik dari data. Setelah sekitar epoch ke-10, penurunan RMSE mulai melambat dan grafik cenderung stabil, terutama pada data validasi yang berada di kisaran 0.28–0.30. Sementara itu, RMSE pada data training terus sedikit turun dan tetap lebih rendah dari data validasi.
-
+Grafik di atas menunjukkan bahwa nilai root mean squared error (RMSE) untuk data training dan test turun dengan cepat di awal epoch, yang berarti model belajar dengan baik dari data. Setelah sekitar epoch ke-7, penurunan RMSE melambat dan hasilnya menjadi lebih stabil, terutama pada data test yang nilainya berada di kisaran 0.28–0.34. Hal ini menunjukkan model mampu memprediksi dengan cukup baik dan tidak mengalami overfitting.
 
 ## Kesimpulan 
 **1. Bagaimana distribusi produk tiap brand untuk jenis kulit tertentu?**
