@@ -66,7 +66,7 @@ user_id     | Nomor unik pembeli
  10 | Sensitive   |  1472 non-null |  int64
  11 | user_id     |  1472 non-null |  object 
 
-Berdasarkan tabel di atas, dapat diketahui bahwa tidak terdapat nilai null pada setiap kolom dalam dataset yang digunakan. Dataset ini terdiri dari 1472 entri produk dan memiliki total 11 fitur.
+Berdasarkan tabel di atas, dapat diketahui bahwa tidak terdapat nilai null pada setiap kolom dalam dataset yang digunakan. Dataset ini terdiri dari 1472 entri produk dan memiliki total 12 fitur.
 - Terdapat 4 fitur dengan tipe categorical atau object, yaitu: `Label`, `Brand`, `Name`, `Ingredients`, `user_id`.
 - Terdapat 1 fitur dengan tipe float64, yaitu: `Rank`
 - Terdapat 6 fitur dengan tipe int64, yaitu: `Price`, `Combination`, `Dry`, `Normal`, `Oily`, `Sensitive`.
