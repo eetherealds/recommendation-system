@@ -28,7 +28,7 @@ Pengembangan sistem rekomendasi ini menjadi penting karena dapat memberikan pand
 - Menerapkan pendekatan collaborative filtering dengan memanfaatkan algoritma deep learning agar dapat menangkap pola preferensi pengguna secara lebih mendalam.
 
 ## Data Understanding
-Dataset yang digunakan merupakan kumpulan data produk kosmetik dari platform Sephora yang tersedia secara publik di [Kaggle](https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/data). Dataset ini berisi 1472 baris dan 11 kolom yang merepresentasikan berbagai atribut produk kosmetik, seperti Label, Brand, Name, Price, Rank, Ingredients, serta kecocokan produk untuk tipe kulit tertentu (Combination, Dry, Normal, Oily, Sensitive). Pada awalnya dataset tidak memiliki user ID, lalu saya menambahkan user ID untuk di collaborative-based filtering nanti.
+Dataset yang digunakan merupakan kumpulan data produk kosmetik dari platform Sephora yang tersedia secara publik di [Kaggle](https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/data). Dataset ini berisi 1472 baris dan 11 kolom yang merepresentasikan berbagai atribut produk kosmetik, seperti Label, Brand, Name, Price, Rank, Ingredients, serta kecocokan produk untuk tipe kulit tertentu (Combination, Dry, Normal, Oily, Sensitive). Pada awalnya dataset tidak memiliki user ID, lalu saya menambahkan kolom user ID.
 
 ### Data Loading
 #### Variabel pada Cosmetics dataset
