@@ -28,11 +28,11 @@ Pengembangan sistem rekomendasi ini menjadi penting karena dapat memberikan pand
 - Menerapkan pendekatan collaborative filtering dengan memanfaatkan algoritma deep learning agar dapat menangkap pola preferensi pengguna secara lebih mendalam.
 
 ## Data Understanding
-Dataset yang digunakan merupakan kumpulan data produk kosmetik dari platform Sephora yang tersedia secara publik di [Kaggle](https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/data). Dataset ini berisi 1472 baris dan 11 kolom yang merepresentasikan berbagai atribut produk kosmetik, seperti Label, Brand, Name, Price, Rank, Ingredients, serta kecocokan produk untuk tipe kulit tertentu (Combination, Dry, Normal, Oily, Sensitive).
+Dataset yang digunakan merupakan kumpulan data produk kosmetik dari platform Sephora yang tersedia secara publik di [Kaggle](https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/data). Dataset ini berisi 1472 baris dan 11 kolom yang merepresentasikan berbagai atribut produk kosmetik, seperti Label, Brand, Name, Price, Rank, Ingredients, serta kecocokan produk untuk tipe kulit tertentu (Combination, Dry, Normal, Oily, Sensitive). Pada awalnya dataset tidak memiliki user ID, lalu saya menambahkan user ID untuk di collaborative-based filtering nanti.
 
 ### Data Loading
 #### Variabel pada Cosmetics dataset
-Dataset ini memiliki 11 variabel dengan keterangan sebagai berikut.
+Dataset ini memiliki 12 variabel dengan keterangan sebagai berikut.
 Variabel    | Keterangan
 ------------|-----------
 Label       |	Kategori/jenis produk kosmetik
@@ -46,6 +46,8 @@ Dry         | Cocok untuk kulit kering (1=ya, 0=tidak)
 Normal      |	Cocok untuk kulit normal (1=ya, 0=tidak)
 Oily        | Cocok untuk kulit berminyak (1=ya, 0=tidak)
 Sensitive   | Cocok untuk kulit sensitif (1=ya, 0=tidak)
+user_id     | Nomor unik pembeli
+
 
 #### Data Info
 
@@ -62,9 +64,10 @@ Sensitive   | Cocok untuk kulit sensitif (1=ya, 0=tidak)
  8  | Normal      |  1472 non-null |  int64  
  9  | Oily        |  1472 non-null |  int64  
  10 | Sensitive   |  1472 non-null |  int64
+ 11 | user_id     |  1472 non-null |  object 
 
 Berdasarkan tabel di atas, dapat diketahui bahwa tidak terdapat nilai null pada setiap kolom dalam dataset yang digunakan. Dataset ini terdiri dari 1472 entri produk dan memiliki total 11 fitur.
-- Terdapat 4 fitur dengan tipe categorical atau object, yaitu: `Label`, `Brand`, `Name`, `Ingredients`.
+- Terdapat 4 fitur dengan tipe categorical atau object, yaitu: `Label`, `Brand`, `Name`, `Ingredients`, `user_id`.
 - Terdapat 1 fitur dengan tipe float64, yaitu: `Rank`
 - Terdapat 6 fitur dengan tipe int64, yaitu: `Price`, `Combination`, `Dry`, `Normal`, `Oily`, `Sensitive`.
 
@@ -106,6 +109,7 @@ Dry         | 0
 Normal      | 0
 Oily        | 0
 Sensitive   | 0
+user_id     | 0
 
 Tidak terdapat missing values, jadi tidak dilakukan cleaning pada data.
 
@@ -185,7 +189,7 @@ Pada tahap ini, data dipersiapkan untuk membangun sistem rekomendasi berbasis ko
 - `Brand`           : Nama merek produk
 - `Name`            : Nama produk
 - `Brand_Product`   : Gabungan dari Brand, Name, dan Label produk
-- `Ingredient_Skin` : Daftar ingredients produk, diakhiri dengan tipe kulit yang sesuai
+- `Ingredient_Skin` : Daftar label, ingredients produk, diakhiri dengan tipe kulit yang sesuai
 
 Seluruh kolom dikonversi ke dalam list, lalu digabungkan kembali dalam sebuah DataFrame baru bernama `content_based_data`. Kolom `Ingredient_Skin` selanjutnya diolah menggunakan TfidfVectorizer untuk mengubah data teks menjadi representasi numerik, sehingga bisa digunakan untuk perhitungan kemiripan antar produk (cosine similarity).
 
@@ -200,37 +204,33 @@ Hasil vektorisasi TF-IDF ini disusun dalam DataFrame, di mana:
 ![image](https://github.com/user-attachments/assets/8b5aa48d-391f-489e-8e35-72d326cb68bc)
 
 ### 2.  Collaborative - based Filtering
-Pada tahap ini, data dipersiapkan untuk pembuatan sistem rekomendasi collaborative filtering pada produk skincare. Langkah-langkah utama yang dilakukan meliputi:
+Pada tahap ini, data dipersiapkan untuk pembuatan sistem rekomendasi collaborative filtering pada produk skincare. 
+- `Brand`           : Nama merek produk
+- `Name`            : Nama produk
+- `Rank`            : Peringkat/popularitas produk
+- `user_id`         : Nomor unik pembeli
+- `Brand_Product`   : Gabungan dari Brand, Name, dan Label produk
+- `Ingredient_Skin` : Daftar label, ingredients produk, diakhiri dengan tipe kulit yang sesuai
 
-**Penyusunan DataFrame**
+Selanjutnya, dilakukan encoding terhadap kolom `user_id` dan `Brand_Product` menjadi bentuk numerik menggunakan dictionary mapping, sehingga data dapat diterima oleh model machine learning untuk collaborative filtering. Kolom Rank yang merepresentasikan popularitas atau rating produk kemudian dinormalisasi ke rentang 0–1 agar seragam dan sesuai untuk pemodelan. 
 
-Data yang digunakan difokuskan pada kolom-kolom penting, yaitu `Brand`, `Name`, `Brand_Product` (gabungan dari Brand, Name, dan Label produk), serta `Ingredient_Skin` yang merupakan daftar ingredients produk yang telah digabungkan dengan tipe kulit yang sesuai. Untuk setiap produk, dibuat kolom `product_id` sebagai kode unik yang memudahkan proses identifikasi dan pemetaan produk dalam sistem.
+Setelah itu, data diacak untuk memastikan distribusi yang merata saat proses training. Fitur input berupa pasangan angka hasil encoding (user dan name). Selanjutnya, fitur input yang digunakan adalah pasangan user dan produk dalam bentuk angka (`user`, `name`), sementara targetnya adalah `Rank` yang telah dinormalisasi ke rentang 0 hingga 1. Normalisasi ini penting agar model dapat beradaptasi dengan perbedaan skala dan menghasilkan prediksi yang lebih stabil.
 
-No    | Brand	          | Name	                                        | Rank |	Brand_Product	| Ingredient_Skin	| product_id
-------|-----------------|----------------------------------------------|------|---------------|-----------------|-----------
-0	    | LA MER	         | Crème de la Mer                              |	4.1	 |LA MER - Crème de la Mer (Moisturizer)	| Algae (Seaweed) Extract, Mineral Oil, Petrolat...	|LA0
-1	    | SK-II	          | Facial Treatment Essence	                    | 4.1	 | SK-II - Facial Treatment Essence (Moisturizer)	| Galactomyces Ferment Filtrate (Pitera), Butyle...	| SK-1
-2     | DRUNK ELEPHANT	 | Protini™ Polypeptide Cream	                  | 4.4	 | DRUNK ELEPHANT - Protini™ Polypeptide Cream (M...	| Water, Dicaprylyl Carbonate, Glycerin, Ceteary...	| DRU2
-3	    | LA MER	         | The Moisturizing Soft Cream                 	| 3.8	 | LA MER - The Moisturizing Soft Cream (Moisturi...	| Algae (Seaweed) Extract, Cyclopentasiloxane, P...	| LA3
-4	    | IT COSMETICS	   | Your Skin But Better™ CC+™ Cream with SPF 50+ |	4.1	| IT COSMETICS - Your Skin But Better™ CC+™ Crea... |	Water, Snail Secretion Filtrate, Phenyl Trimet... |	IT4
+No   | user	| name	| Rank
+852	 | 852 	| 852	 | 3.8
+184	 | 184	 | 184	 | 4.7
+1261	| 1261	| 1261 |	4.0
+67	  | 67	  | 67	  | 4.0
+220	 | 220  |	220  |	4.5
+...	 | ...	 | ...	 | ...
+1130	| 1130	| 1130	| 4.0
+1294	| 1294	| 1294	| 5.0
+860	 | 860	 | 860	 | 4.4
+1459	| 1459	| 1459 | 4.7
+1126 |	1126	| 1126 | 4.2
 
-**Encoding & Normalisasi Rank**
 
-Selanjutnya, dilakukan encoding terhadap kolom `product_id` dan `Brand_Product` menjadi bentuk numerik menggunakan dictionary mapping, sehingga data dapat diterima oleh model machine learning untuk collaborative filtering. Kolom Rank yang merepresentasikan popularitas atau rating produk kemudian dinormalisasi ke rentang 0–1 agar seragam dan sesuai untuk pemodelan. 
-
-**Shuffling & Split Data**
-
-Setelah itu, data diacak untuk memastikan distribusi yang merata saat proses pelatihan. Fitur input berupa pasangan angka hasil encoding (product dan name), sedangkan targetnya adalah nilai Rank yang telah dinormalisasi. 
-
-Rank |	product_id	| product	| name
------|------------|---------|------
-3.8	 | SK-852	    | 852	    | 852
-4.7	 | EST184	    | 184	    | 184
-4.0	 | PET1261    | 1261    |	1261
-4.0	 | SMA67	     | 67      |	67
-4.5	 | CLI220 	   | 220	    | 220
-
-Data ini kemudian dibagi menjadi dua bagian, yaitu 80% untuk training dan 20% untuk validasi
+Terakhir, data dibagi menjadi dua bagian, yaitu 80% untuk training dan 20% untuk validasi, sehingga performa model dapat dievaluasi secara objektif.
 
 ## Modeling & Result
 
@@ -245,27 +245,23 @@ Untuk menghasilkan rekomendasi, digunakan sebuah fungsi yang mengambil produk ac
 
 Sebagai contoh, jika pengguna mencari produk `CLINIQUE - Pep-Start 2-in-1 Exfoliating Cleanser (Cleanser)`, fungsi rekomendasi akan mengembalikan 10 produk skincare yang paling mirip berdasarkan skor cosine similarity tertinggi. Berikut ilustrasi format hasil top-10 rekomendasi yang dapat diterima pengguna:
 
-![image](https://github.com/user-attachments/assets/c2c6dbce-7fda-4b8e-aeaa-fef380ede911)
+![image](https://github.com/user-attachments/assets/56c19664-c41b-43ca-8497-bf66e1cdadb7)
+
+Hasil rekomendasi berdasarkan label, ingredient, dan skin type berhasil memberikan rekomendasi sebanyak 8 dan yang tidak sesuai rekomendasi 2.
+
 
 ### 2.  Collaborative-Based Filtering
-Pada tahap pemodelan collaborative filtering, sistem rekomendasi dibangun menggunakan pendekatan deep learning berbasis embedding dengan TensorFlow/Keras. Model ini bertugas mempelajari pola hubungan antar produk skincare berdasarkan representasi numerik (encoded) dari produk dan kombinasi nama produk, sehingga mampu memprediksi skor popularitas atau rating suatu produk.
+Pada tahap ini, dilakukan model sistem rekomendasi produk skincare dibangun menggunakan pendekatan collaborative filtering berbasis neural network dengan framework TensorFlow dan Keras.Model ini dibuat dalam bentuk class `RecommenderNet` yang merupakan turunan dari `tf.keras.Model`. Di dalamnya, terdapat embedding layer untuk user (`product_embedding`) dan produk (`name_embedding`), masing-masing dengan regularisasi dan ukuran embedding yang bisa diatur. Selain itu, terdapat juga embedding bias untuk user dan produk. Embedding user dan produk kemudian digabung (concatenate), dilewatkan ke dense layer dengan 128 neuron dan aktivasi ReLU, diikuti dropout untuk mengurangi risiko overfitting, dan diteruskan ke dense layer output berukuran 1 (linear) untuk menghasilkan skor prediksi.
+
+Model diinisialisasi dengan jumlah user dan produk hasil encoding, serta embedding size yang diinginkan. Proses kompilasi model menggunakan fungsi loss `BinaryCrossentropy`, optimizer Adam dengan learning rate 0.0005, dan metrik evaluasi `RootMeanSquaredError`. Untuk mencegah overfitting, digunakan callback `EarlyStopping` yang akan menghentikan training jika nilai RMSE validasi tidak membaik selama 5 epoch berturut-turut. Proses training dilakukan dengan batch size 32, maksimal 100 epoch, serta memanfaatkan data validasi 20% dari dataset.
 
 Arsitektur model terdiri dari embedding layer untuk `product_id` dan `Brand_Product`, masing-masing dengan bias, yang kemudian hasil embeddingnya digabungkan dan diproses melalui beberapa dense layer hingga menghasilkan skor prediksi. Model ini dioptimasi menggunakan loss function Mean Squared Error dan optimizer Adam dengan learning rate kecil, serta menggunakan EarlyStopping untuk mencegah overfitting saat pelatihan.
 
-![image](https://github.com/user-attachments/assets/67bb9e28-e4e2-4933-8421-75ed4e5a8c4d)
+Setelah training, performa model divisualisasikan dengan membuat grafik learning curve RMSE pada data training dan validasi di setiap epoch, sehingga dapat dipantau apakah model mengalami overfitting atau underfitting. Berdasarkan grafik, model menunjukkan penurunan error yang signifikan di awal, kemudian stabil, menandakan proses training berjalan baik.
 
-**Penjelasan:**
+Untuk implementasi sistem rekomendasi, disediakan fungsi `recommend_products_based_on_name`. Fungsi ini menerima nama produk sebagai input, lalu meng-encode produk tersebut dan membuat kombinasi input dengan seluruh user. Model akan memprediksi skor popularitas untuk tiap kombinasi, kemudian memilih 10 user dengan skor tertinggi. Informasi produk yang direkomendasikan ditampilkan lengkap dengan nama, label, ingredients & skin type, serta rating dari dataset hasil filter.
 
-- Loss dan root mean squared error (RMSE) pada training dan validation menurun dengan signifikan di beberapa epoch awal.
-- RMSE val mencapai sekitar 0.17 pada epoch terakhir, yang artinya prediksi model mendekati nilai sesungguhnya dengan kesalahan relatif kecil.
-- Pada sekitar epoch ke-5 sampai ke-10, model mulai menunjukkan tanda stabilisasi (loss dan val_loss hampir konstan).
-
-
-Setelah training, perkembangan performa model dapat dimonitor menggunakan grafik RMSE pada data training dan validasi untuk setiap epoch. Untuk menghasilkan rekomendasi, disediakan fungsi yang menerima input nama produk, kemudian mencari produk-produk lain dengan skor prediksi tertinggi (top-N) berdasarkan hasil inferensi model. Informasi produk yang direkomendasikan, seperti nama, ingredients, tipe kulit, dan rating, ditampilkan secara lengkap agar memudahkan pengguna dalam memilih skincare yang sesuai.
-
-Sebagai contoh, jika pengguna mencari rekomendasi berdasarkan produk `CAUDALIE - Instant Foaming Cleanser (Cleanser)`, sistem akan memberikan daftar top-10 produk skincare yang paling potensial untuk direkomendasikan berdasarkan hasil prediksi model collaborative filtering.
-
-![image](https://github.com/user-attachments/assets/419b1a88-e314-4783-9a1d-f5737bcd5f63)
+![image](https://github.com/user-attachments/assets/66e837b9-c53b-4165-a7e4-a0184e4817a5)
 
 
 ## Evaluation
